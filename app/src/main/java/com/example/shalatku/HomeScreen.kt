@@ -13,20 +13,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun HomeScreen(
     prayers: List<Prayer>,
-    modifier: Modifier = Modifier,
-    onSelectDay: (Int) -> Unit,
-    selectedDay: Int
+    selectedDay: Int = 0,
+    onSelectDay: (Int) -> Unit = {},
+    prayerTimes: PrayerTimesUiState = PrayerTimesUiState.Success(prayers),
+    onRefreshPrayerTimes: () -> Unit = {},
+    modifier: Modifier = Modifier
 ) {
     Column(modifier.padding(16.dp)) {
         Text("Shalatku", style = MaterialTheme.typography.headlineMedium)
         Text("Today's prayer times", style = MaterialTheme.typography.bodyMedium)
         Spacer(Modifier.height(16.dp))
-        prayers.forEach { prayer -> PrayerCard(prayer) }
+        PrayerTimesSection(
+            state = prayerTimes,
+            onRefresh = onRefreshPrayerTimes
+        )
     }
 }
 
@@ -42,4 +48,14 @@ fun PrayerCard(prayer: Prayer) {
             Text(prayer.time, style = MaterialTheme.typography.titleMedium)
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview() {
+    HomeScreen(
+        prayers = samplePrayers,
+        prayerTimes = PrayerTimesUiState.Success(samplePrayers),
+        onRefreshPrayerTimes = {}
+    )
 }
